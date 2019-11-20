@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Example 01.01 - Basic skeleton</title>
+    <script type="text/javascript" src="../libs/three.js"></script>
+    <style>
+        body {
+            /* set margin to 0 and overflow to hidden, to
+             use the complete page */
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Div which will hold the Output -->
+<div id="WebGL-output">
+</div>
+
+<!-- Javascript code that runs our Three.js examples -->
+<script type="text/javascript">
+
+    // once everything is loaded, we run our Three.js stuff.
+    function init() {
+
+        // create a scene, that will hold all our elements such as objects, cameras and lights.
+        var scene = new THREE.Scene();
+
+        // create a camera, which defines where we're looking at.
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        scene.add(camera);
+
+        // create a render and set the size
+        var renderer = new THREE.WebGLRenderer();
+
+        renderer.setClearColor(new THREE.Color(0xffffff, 1.0));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMapEnabled = true;
+
+        // create the ground plane
+        var planeGeometry = new THREE.PlaneGeometry(40, 60, 1, 1);
+        var planeMaterial = new THREE.MeshLambertMaterial({color: 0x444444});
+        var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.receiveShadow = true;
+
+        // rotate and position the plane
+        plane.rotation.x = -0.5 * Math.PI;
+        plane.position.x = 0;
+        plane.position.y = 0;
+        plane.position.z = 0;
+
+        // add the plane to the scene
+        //scene.add(plane);
+
+        var geometry = new THREE.Geometry();
+        geometry.vertices.push(new THREE.Vector3( 0, 0, 0) );
+        geometry.vertices.push(new THREE.Vector3( 0, 25, 0) );
+        geometry.vertices.push(new THREE.Vector3( 0, 25, 25) );
+        geometry.vertices.push(new THREE.Vector3( 25, 25, 25) );
+        geometry.vertices.push(new THREE.Vector3( 25, 25, 0) );
+        geometry.vertices.push(new THREE.Vector3( 25, 0, 0) );
+        geometry.vertices.push(new THREE.Vector3( 0, 0, 0) );
+        // geometry.vertices.push(new THREE.Vector3( 10, 0, 0) );
+        //create a blue LineBasicMaterial
+        var materialBase = new THREE.LineBasicMaterial( { color: 0x828372 } );
+        var material = new THREE.LineBasicMaterial( { color: 0x555555 } );
+
+        var line = new THREE.Line(geometry,materialBase);
+        scene.add(line);
+
+        var baseY = new THREE.Geometry();
+        baseY.vertices.push(new THREE.Vector3(0,100,0));
+        baseY.vertices.push(new THREE.Vector3(0,-100,0));
+        scene.add(new THREE.Line(baseY,material))
+
+
+        var baseX = new THREE.Geometry();
+        baseX.vertices.push(new THREE.Vector3(100,0,0));
+        baseX.vertices.push(new THREE.Vector3(-100,0,0));
+        scene.add(new THREE.Line(baseX,material))
+
+        var baseZ = new THREE.Geometry();
+        baseZ.vertices.push(new THREE.Vector3(0,0,100));
+        baseZ.vertices.push(new THREE.Vector3(0,0,-100));
+        scene.add(new THREE.Line(baseZ,material))
+
+
+
+
+
+        // position and point the camera to the center of the scene
+        camera.position.x = 30;
+        camera.position.y = 40;
+        camera.position.z = 30;
+        camera.lookAt(scene.position);
+
+        // add subtle ambient lighting
+        var ambientLight = new THREE.AmbientLight(0xaaaaaa);
+        scene.add(ambientLight);
+
+
+
+        // add the output of the renderer to the html element
+        document.getElementById("WebGL-output").appendChild(renderer.domElement);
+
+        // render the scene
+        renderer.render(scene, camera);
+
+    }
+    window.onload = init
+
+</script>
+<style lang="css">
+    body{
+        color:0x888888;;
+    }
+</style>
+
+</body>
+</html>
