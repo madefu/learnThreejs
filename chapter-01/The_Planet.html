@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Example 01.04 - Materials, light and animation</title>
+    <script type="text/javascript" src="../libs/three.js"></script>
+
+    <script type="text/javascript" src="../libs/stats.js"></script>
+    <style>
+        body {
+            /* set margin to 0 and overflow to hidden, to go fullscreen */
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+<div id="Stats-output">
+</div>
+<!-- Div which will hold the Output -->
+<div id="WebGL-output">
+</div>
+
+<!-- Javascript code that runs our Three.js examples -->
+<script type="text/javascript">
+//空间
+var scene =new THREE.Scene();
+//相机
+initCamera(){
+	var camera = new THREE.PerspectiveCamera(45,window.innerWidth/window.innerHeight,0.1,1000);
+	camera.position.set(0,40,100);
+	camera.lookAt(new THREE.Vector3(0,0,0));
+	scene.add(camera);
+}
+//光源
+initLight(){
+	var directionLight = new THREE.DirectionalLight(#ffffff,2)
+	
+}
+//球体
+initSphere(p){
+	var sphere = new THREE.SphereGeometry(p,20,20);
+	return sphere;
+}
+
+//运动控制
+moveMent(){
+	
+}
+
+var earth = initSphere(8);
+</script>
+
+	<body>
+	</body>
+</html>
