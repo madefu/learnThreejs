@@ -148,8 +148,8 @@
 			
 			//平面里生成一个花瓣
 			p2=300*Math.sin(4*theta);
-			sp2.position.x=p2*Math.cos(theta);
-			sp2.position.z=p2*Math.sin(theta);
+			sp2.position.x=sphere.position.x+p2*Math.cos(theta);
+			sp2.position.z=sphere.position.z+p2*Math.sin(theta);
 			sp2.position.y=step2;
 			// render using requestAnimationFrame
             requestAnimationFrame(renderScene);

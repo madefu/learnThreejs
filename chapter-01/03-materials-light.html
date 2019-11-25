@@ -42,7 +42,7 @@
 
         // create the ground plane
         var planeGeometry = new THREE.PlaneGeometry(60, 20);
-        var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
+        var planeMaterial = new THREE.MeshLambertMaterial({color: 0xcccccc});
         var plane = new THREE.Mesh(planeGeometry, planeMaterial);
         plane.receiveShadow = true;
 
@@ -59,7 +59,7 @@
         var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
         var cubeMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
         var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-        cube.castShadow = true;
+        cube.castShadow = false;
 
         // position the cube
         cube.position.x = -4;
@@ -75,7 +75,7 @@
 
         // position the sphere
         sphere.position.x = 20;
-        sphere.position.y = 4;
+        sphere.position.y = 9;
         sphere.position.z = 2;
         sphere.castShadow = true;
 
@@ -99,8 +99,20 @@
 
         // call the render function
         renderer.render(scene, camera);
+        var step =0;
+    
+        function render(){
+            step +=0.04;
+            sphere.position.x = 20+(10*(Math.cos(step)));
+            sphere.position.y = 2+(10*Math.abs(Math.sin(step)));
+            requestAnimationFrame(render);
+            render.render(scene,camera);
+        }
+        
     }
     window.onload = init;
+
+    
 
 
 </script>
