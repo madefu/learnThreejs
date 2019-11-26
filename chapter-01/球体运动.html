@@ -74,7 +74,7 @@
         //scene.add(cube);
 		var earth = new THREE.SphereGeometry(10,20,20);
         var sphereGeometry = new THREE.SphereGeometry(20, 20, 20);
-        var sphereMaterial = new THREE.MeshLambertMaterial({color: 0xFFFACD});
+        var sphereMaterial = new THREE.MeshLambertMaterial({color: "white"});
         var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
         // position the sphere
@@ -98,11 +98,30 @@
         // var ambientLight = new THREE.AmbientLight(0xFFFFF0);
         // scene.add(ambientLight);
 		/*方向光光源*/
-		var pointColor = "white";
-		var ambientLight,directionalLight;
-		directionalLight = new THREE.DirectionalLight(pointColor,3);
-		directionalLight.position.set(-40, 60, -10);
-		scene.add(directionalLight);
+		// var pointColor = "";
+		var ambientLight,directionalLight1;
+		directionalLight1 = new THREE.DirectionalLight(0xFFDEAD,3);
+		directionalLight1.position.set(0, -100, 0);
+		scene.add(directionalLight1);
+		
+		var directionalLight = new THREE.DirectionalLight("0xFFFF00");
+		directionalLight.position.set(0, 160, 0);
+		directionalLight.castShadow = true;//设置true会产生阴影
+		directionalLight.shadowCameraNear = 2;//从距离光源哪个点开始可以产生阴影
+		directionalLight.shadowCameraFar = 200;//到距离光源哪个点开始可以产生阴影
+		// directionalLight.shadowCameraFov = //用于生成阴影的视场大小
+		directionalLight.shadowCameraLeft = -50;//
+		directionalLight.shadowCameraRight = 50;
+		directionalLight.shadowCameraTop = 50;
+		directionalLight.shadowCameraBottom = -50;
+		
+		directionalLight.distance = 0;
+		directionalLight.intensity = 1;
+		directionalLight.shadowMapHeight = 1024;
+		directionalLight.shadowMapWidth = 1024;
+		
+		scene.add(directionalLight); 
+
 		
 		// function initLight() {
 		// 	ambientLight = new THREE.AmbientLight("#111111");
@@ -190,8 +209,8 @@
             requestAnimationFrame(renderScene);
             renderer.render(scene, camera);
 			if(sphere.position.x == sp2.position.x 
-			&& sphere.position.z == sp2.position.z
-			&& sphere.position.y == sp2.position.y
+				&& sphere.position.z == sp2.position.z
+				&& sphere.position.y == sp2.position.y
 			){
 					console.log(sphere.position,step2);
 			}

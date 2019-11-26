@@ -35,13 +35,16 @@ initCamera(){
 	scene.add(camera);
 }
 //光源
-initLight(){
-	var directionLight = new THREE.DirectionalLight(#ffffff,2)
+initDirectionLight(){
+	var directionLight = new THREE.DirectionalLight(#ffffff,2);
+	
 	
 }
 //球体
 initSphere(p){
 	var sphere = new THREE.SphereGeometry(p,20,20);
+	var material = new THREE.MeshNormalMaterial({color: "white"})
+	var sp = new Mash(sphere,material);
 	return sphere;
 }
 

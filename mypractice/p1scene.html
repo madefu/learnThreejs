@@ -42,7 +42,7 @@
 
         // create the ground plane
         var planeGeometry = new THREE.PlaneGeometry(40, 60, 1, 1);
-        var planeMaterial = new THREE.MeshLambertMaterial({color: 0x444444});
+        var planeMaterial = new THREE.MeshLambertMaterial({color: 0x222222});
         var plane = new THREE.Mesh(planeGeometry, planeMaterial);
         plane.receiveShadow = true;
 
@@ -53,7 +53,7 @@
         plane.position.z = 0;
 
         // add the plane to the scene
-        //scene.add(plane);
+        scene.add(plane);
 
         var geometry = new THREE.Geometry();
         geometry.vertices.push(new THREE.Vector3( 0, 0, 0) );
@@ -88,9 +88,6 @@
         scene.add(new THREE.Line(baseZ,material))
 
 
-
-
-
         // position and point the camera to the center of the scene
         camera.position.x = 30;
         camera.position.y = 40;
@@ -98,7 +95,7 @@
         camera.lookAt(scene.position);
 
         // add subtle ambient lighting
-        var ambientLight = new THREE.AmbientLight(0xaaaaaa);
+        var ambientLight = new THREE.AmbientLight(0x888888);
         scene.add(ambientLight);
 
 
@@ -115,7 +112,7 @@
 </script>
 <style lang="css">
     body{
-        color:0x888888;;
+        color: 0xffffff;
     }
 </style>
 
