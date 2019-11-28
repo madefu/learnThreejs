@@ -97,12 +97,7 @@
 			// 	screen.add(earthMash);
 			// });
 			
-			function createMesh(geom, imageFile) {
-				var texture = THREE.ImageUtils.loadTexture(imageFile);
-				var mat = new THREE.MeshPhongMaterial({ map: texture });
-				var mesh = new THREE.Mesh(geom, mat);
-				return mesh;
-			}
+			
 			
 			//环绕球体
 			sp2 = new THREE.Mesh(earth,sphereMaterial);
@@ -169,8 +164,8 @@
             // cube.rotation.z += 0.02;
 
             // bounce the sphere up and down
-            step += 0.05;
-			step2 -= 0.01;
+            step += 0.01;
+			step2 -= 0.001;
 			theta=step2;
 			if(step2<-200){
 				step2=200;
@@ -226,12 +221,21 @@
             return stats;
         }
 		
+		function createMesh(geom, imageFile) {
+			var texture = new THREE.ImageUtils.loadTexture(imageFile);
+			var mat = new THREE.MeshPhongMaterial({ map: texture });
+			var mesh = new THREE.Mesh(geom, mat);
+			return mesh;
+		}
 		
 		var stats = initStats();
 		
 		// create a scene, that will hold all our elements such as objects, cameras and lights.
 		var scene = new THREE.Scene();
-		var sphere,sp2;
+		var sphere,sp2,sp3;
+		sp3 = new THREE.SphereGeometry(15,20,20);
+		
+		
 		var camera;
 		var spotLightNeptune = initSpotLight(spotLightNeptune);
 		initCamera();
