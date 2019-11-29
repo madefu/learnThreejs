@@ -1,0 +1,138 @@
+<html>
+
+<head>
+    <title>Example 01.01 - Basic skeleton</title>
+    <script type="text/javascript" src="../libs/three.js"></script>
+    <style>
+        body {
+            /* set margin to 0 and overflow to hidden, to
+             use the complete page */
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Div which will hold the Output -->
+<div id="WebGL-output">
+</div>
+
+<script type="text/javascript">
+var scene =  new THREE.Scene();
+
+
+var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1800);
+// camera.position.x=100;
+// camera.position.y=100;
+// camera.position.z=100;
+			camera.position.x = 380;
+			camera.position.y = 380;
+			camera.position.z = 380;
+			camera.lookAt(new THREE.Vector3(0,0,0));
+// camera.lookAt(new THREE.Vector3(0,100,0));
+
+// show axes in the screen
+var axes = new THREE.AxisHelper(200);
+scene.add(axes);
+
+//var earth1 = createMesh(new THREE.SphereGeometry(200,200,200),"../assets/textures/planets/earth.jpg");
+var ball = new THREE.SphereGeometry(4,20,20);
+var sphereMaterial = new THREE.MeshLambertMaterial({color: "white"});
+ball = new THREE.Mesh(ball,sphereMaterial);
+ball.position.x=-100;
+ball.position.y=-100;
+ball.position.z=100;
+scene.add(ball);
+
+var spotLight = new THREE.SpotLight(0x7FFFD4);
+spotLight.position.set(0,0,380);
+spotLight.castShadow = true;
+spotLight.target = ball;
+scene.add(spotLight);
+
+var sphereGeometry = new THREE.SphereGeometry(50, 200, 200);
+// var sphereMaterial1 = new THREE.MeshLambertMaterial({color: 0x9999ff});
+// var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial1);
+addMash(sphereGeometry,'../assets/textures/planets/mars_1k_normal.jpg');
+
+var mesh2 = createMesh(sphereGeometry,'../assets/textures/planets/EarthNormal.png');
+ mesh2.position.x = -50;
+ mesh2.position.y = -50;
+ mesh2.position.z = 2;
+ mesh2.castShadow = false;
+ scene.add(mesh2);
+
+// position the sphere
+// sphere.position.x = 20;
+// sphere.position.y = 90;
+// sphere.position.z = 2;
+// sphere.castShadow = false;
+
+// add the sphere to the scene
+// scene.add(sphere);
+
+
+function addMash(g,imageFile){
+	var loader = new THREE.TextureLoader();/*材质纹理加载器*/
+	var texture = new THREE.ImageUtils.loadTexture(imageFile);
+	// var texture = loader.load(imageFile);
+	var material = new THREE.MeshBasicMaterial({ map : texture });//材质，将图片解构成THREE能理解的材质
+	var mesh = new THREE.Mesh(g,material);
+	mesh.position.x = 20;
+	mesh.position.y = 90;
+	mesh.position.z = 2;
+	mesh.castShadow = false;
+	scene.add(mesh);
+}
+
+function createMesh(geom, imageFile) {
+	var texture = new THREE.ImageUtils.loadTexture(imageFile);
+	var mat = new THREE.MeshPhongMaterial({ map: texture });
+	var mesh = new THREE.Mesh(geom, mat);
+	return mesh;
+}
+
+var directionLight1 = new THREE.DirectionalLight(0x00FFFF,1);
+directionLight1.position.set(1000,1000,0);
+// directionLight1.target
+// scene.add(earth1);
+scene.add(directionLight1);
+
+// function initDirectionalLight(){
+	var directionalLightUp;
+	directionalLightUp = new THREE.DirectionalLight(0xFFFF00,1);
+	directionalLightUp.position.set(0, 0, 1000);
+	scene.add(directionalLightUp);
+	
+	// var directionalLight = new THREE.DirectionalLight("0xFFFF00");
+	// directionalLight.position.set(0, 160, 0);
+	// directionalLight.castShadow = true;//设置true会产生阴影
+	// directionalLight.shadowCameraNear = 2;//从距离光源哪个点开始可以产生阴影
+	// directionalLight.shadowCameraFar = 200;//到距离光源哪个点开始可以产生阴影
+	// directionalLight.shadowCameraFov = //用于生成阴影的视场大小
+	// directionalLight.shadowCameraLeft = -50;//
+	// directionalLight.shadowCameraRight = 50;
+	// directionalLight.shadowCameraTop = 50;
+	// directionalLight.shadowCameraBottom = -50;
+	
+	// directionalLight.distance = 0;
+	// directionalLight.intensity = 1;
+	// directionalLight.shadowMapHeight = 1024;
+	// directionalLight.shadowMapWidth = 1024;
+	
+	// scene.add(directionalLight); 
+// }
+// initDirectionalLight();
+
+// create a render and set the size
+var renderer = new THREE.WebGLRenderer();
+renderer.setClearColor(new THREE.Color(0x000000, 1.0));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMapEnabled = true;
+renderer.render(scene, camera);
+
+// add the output of the renderer to the html element
+document.getElementById("WebGL-output").appendChild(renderer.domElement);
+</script>
+</html>
