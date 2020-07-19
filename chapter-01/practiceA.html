@@ -51,11 +51,11 @@
         // scene.add(plane);
         
         //perspectiveCamera远景相机类似人眼
-        var camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        var camera = new THREE.PerspectiveCamera( 10, window.innerWidth / window.innerHeight, 0.1, 1000 );
         // position and point the camera to the center of the scene
-        camera.position.x = 100;
-        camera.position.y = 100;
-        camera.position.z = 100;
+        camera.position.x = -200;
+        camera.position.y = 0;
+        camera.position.z = 0;
         camera.lookAt(scene.position);
 
 
