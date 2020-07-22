@@ -9,11 +9,16 @@
     <script type="text/javascript" src="../libs/stats.js"></script>
     <script type="text/javascript" src="../libs/dat.gui.js"></script>
     <style>
-        body {
-            /* set margin to 0 and overflow to hidden, to go fullscreen */
-            margin: 0;
-            overflow: hidden;
-        }
+        
+		html,body{
+		    width:100%;
+		    height:100%
+		}
+		body {
+		    /* set margin to 0 and overflow to hidden, to go fullscreen */
+		    margin: 0;
+		    overflow: hidden;
+		}
     </style>
 </head>
 <body>
@@ -111,7 +116,7 @@
         function render() {
             stats.update();
 
-            torus.rotation.y = step += 0.01;
+            // torus.rotation.y = step += 0.01;
 
             // render using requestAnimationFrame
             requestAnimationFrame(render);

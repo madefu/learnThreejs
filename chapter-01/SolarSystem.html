@@ -8,11 +8,18 @@
     <script type="text/javascript" src="../libs/stats.js"></script>
 
     <style>
-        body {
-            /* set margin to 0 and overflow to hidden, to go fullscreen */
-            margin: 0;
-            overflow: hidden;
-        }
+		html,body{
+		    width:100%;
+		    height:100%
+		}
+		body {
+		    /* set margin to 0 and overflow to hidden, to go fullscreen */
+		    margin: 0;
+		    overflow: hidden;
+			font-family: "华文细黑";
+			background:url("../assets/textures/planets/universal_background.jpg") no-repeat;
+			background-size: 100%;
+		}
     </style>
 </head>
 <body>
@@ -32,10 +39,7 @@ var scene = new THREE.Scene();//the space
 var axisHelper = new THREE.AxisHelper(500000);
 scene.add(axisHelper);
 
-//尺寸缩放比例，角速度缩放比例，
-let angularRate=0.02;
-//万公里太大，导致半径会被忽略，所以半径和距离单位统一为千公里
-let rangeRate=10;
+
 var camera = initCamera();
 //一个相机
 //Y轴垂直向下看到0点
@@ -43,20 +47,30 @@ function initCamera(){
 	camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 63100);
 	// camera = new THREE.OrthographicCamera(30000,-30000,0,30000,50000);
 	// position and point the camera to the center of the scene
-	camera.position.x = 200;
-	camera.position.y = 200;
-	camera.position.z = 142940;
-	camera.lookAt(new THREE.Vector3(0,0,142940));
+	camera.position.x = 20;
+	camera.position.y = 20;
+	camera.position.z = 14960;//142940,450400;14960
+	camera.lookAt(new THREE.Vector3(0,0,14960));
 	return camera;
 }
 
+
+
+
 //星球对象构造函数，半径，相对角速度,相对参照位置(渲染时候做)
 function createPlanet(radius,angularSpeed,img,x,y,z,flag,ringImg){
+
+	//尺寸缩放比例，角速度缩放比例，
+	let angularRate=0.02;
+	//万公里太大，导致半径会被忽略，所以半径和距离单位统一为千公里*10
+	//输入为直径，所以*0.5
+	let rangeRate=10*0.5;
+
 	//半径
 	var planet = new Object;
 	planet.radius = radius*rangeRate;
 	planet.angularSpeed = angularSpeed * angularRate;
-	planet.sphere=new THREE.SphereGeometry(radius,40,40);
+	planet.sphere=new THREE.SphereGeometry(planet.radius,40,40);
 	// mercury.sphere.position.x=1000;
 	//材质
 	var texture = THREE.ImageUtils.loadTexture(img);//new THREE.TextureLoader().load(img);
@@ -74,11 +88,12 @@ function createPlanet(radius,angularSpeed,img,x,y,z,flag,ringImg){
 		//立体原型环----放弃、不知道如何设置切面圆内径
 		// var geometry = new THREE.TorusGeometry( radius+(), , 16, 100 );
 		// 平面圆环
-		let geometryRing = new THREE.RingGeometry( planet.radius+66.9, 48, 32 );
-		// var materialRing = new THREE.MeshBasicMaterial( { color: 0xffff00,side: THREE.DoubleSide} );
+		let geometryRing = new THREE.RingGeometry( 66.9/2, 74.51/2, 32/* planet.radius+66.9, 48, 32 */);
+
+		// // var materialRing = new THREE.MeshBasicMaterial( { color: 0xffff00,side: THREE.DoubleSide} );
 		let textureRing = THREE.ImageUtils.loadTexture(ringImg)
 		let materialRing = new THREE.MeshBasicMaterial( { map: textureRing ,side: THREE.DoubleSide} );
-		// let materialRing = new THREE.MeshPhongMaterial({ /* map: textureRing , */ /* normalMap : textureRing , */ bumpScale:0.2});
+		// // let materialRing = new THREE.MeshPhongMaterial({ /* map: textureRing , */ /* normalMap : textureRing , */ bumpScale:0.2});
 		planet.hasTorus = true;
 		planet.torus = new THREE.Mesh( geometryRing, materialRing );
 		planet.torus.position.x = x;
@@ -86,22 +101,83 @@ function createPlanet(radius,angularSpeed,img,x,y,z,flag,ringImg){
 		planet.torus.position.z = z;
 		planet.torus.rotation.x = -30;
 		scene.add( planet.torus );
+		
+		//================环重叠方案
+		// let geometryRingA = new THREE.RingGeometry( 66.9, 74.51, 32 );
+		// let geometryRingB = new THREE.RingGeometry( 74.658, 92, 32 );
+		// let textureRingB = THREE.ImageUtils.loadTexture(ringImg)
+		// let materialRingB = new THREE.MeshBasicMaterial( { map: textureRingB ,side: THREE.DoubleSide} );
+		// let textureRing = THREE.ImageUtils.loadTexture(ringImg)
+		// let materialRing = new THREE.MeshBasicMaterial( { map: textureRing ,side: THREE.DoubleSide} );
+		// let materialRing = new THREE.MeshPhongMaterial({ /* map: textureRing , */ /* normalMap : textureRing , */ bumpScale:0.2});
+		// planet.hasTorus = true;
+		// planet.torusA = new THREE.Mesh( geometryRingA, materialRing );
+		// planet.torusA.position.x = x;
+		// planet.torusA.position.y = y;
+		// planet.torusA.position.z = z;
+		
+		// planet.torusB = new THREE.Mesh( geometryRingB, materialRingB );
+		// planet.torusB.position.x = x;
+		// planet.torusB.position.y = y;
+		// planet.torusB.position.z = z;
+		
+		
+		//D环，66.9~74.5
+		let ringD = createMesh(new THREE.RingGeometry(66.9,74.5,32,1),x,y,z,-30,"#d0d0d0");
+		let ringC = createMesh(new THREE.RingGeometry(74.658+1,92,32,1),x,y,z,-30,"#fcfecd");
+		let ringB = createMesh(new THREE.RingGeometry(92+3,117.58,40,1),x,y,z,-30,"#afafaf");
+		let ringA = createMesh(new THREE.RingGeometry(122.17,136.775,40,1),x,y,z,-30,"#dad763");
+		// let ringB1 =createMesh(new THREE.RingGeometry(92,117.58,32,1),x,y,z,-30,"#dad763"); 
+		
+		// add the sphere to the scene
+		scene.add(ringD);
+		scene.add(ringC);
+		scene.add(ringB);
+		scene.add(ringA);
+		
+		
+		// scene.add( planet.torusA );
+		// scene.add( planet.torusB );
 	}else{
 		planet.hasTorus = false;
 	}
 	
 	return planet;
 }
+		//创建环
+		function createMesh(geom,x,y,z,rotationX,color) {
 
-//一个太阳
+            // assign two materials
+            var meshMaterial = new THREE.MeshBasicMaterial({color: color});
+            meshMaterial.side = THREE.DoubleSide;
+            var wireFrameMat = new THREE.MeshBasicMaterial({color:"#0000EE"});
+            wireFrameMat.wireframe = false;
+
+            // create a multimaterial
+            // var mesh = THREE.SceneUtils.createMultiMaterialObject(geom, [meshMaterial, wireFrameMat]);
+			var mesh = THREE.SceneUtils.createMultiMaterialObject(geom, [meshMaterial, wireFrameMat]);
+			mesh.position.x=x;
+			mesh.position.y=y;
+			mesh.position.z=z;
+			mesh.rotation.x=rotationX;
+            return mesh;
+        }
+
+//一个太阳,直径万公里、自转周期（天），行星表面，，，距离万公里
 let sun=createPlanet(140,0,'../assets/textures/planets/sun2.jpg',0,0,0);
 let mercury =createPlanet(0.48,0,'../assets/textures/planets/mercury.jpg',0,0,5791);
 let venus = createPlanet(1.21,0,'../assets/textures/planets/venus.jpg',0,0,10820);
-let earth = createPlanet(1.27,0,'../assets/textures/planets/Earth.png',0,0,14960);
+let earth = createPlanet(1.27,5,'../assets/textures/planets/earth2.jpg',0,0,14960);
 let mars = createPlanet(0.67,0,'../assets/textures/planets/Mars.png',0,0,22800);
 let jupiter = createPlanet(14.3,0,'../assets/textures/planets/Jupiter.jpg',0,0,77830);
 let saturn = createPlanet(12.05,0,'../assets/textures/planets/Saturn.jpg',0,0,142940,true
-,'../assets/textures/planets/Saturn.jpg'/* SaturnRing.png */);
+,'../assets/textures/planets/SaturnRing4.png'/* SaturnRing.png */);
+let uranus = createPlanet(5.11,0,'../assets/textures/planets/Uranus.png',0,0,287100);
+//let neptune =createPlanet(4.95,0,'../assets/textures/planets/Naptune_surface.png',0,0,450400,true,'../assets/textures/planets/Naptune_surface.png'/* SaturnRing.png */);
+let neptune = createPlanet(4.95,0,'../assets/textures/planets/Naptune_surface.png',0,0,450400);
+
+
+
 
 let flag=1;
 function renderScene(){
@@ -113,6 +189,8 @@ function renderScene(){
 		flag=1;
 	}
 	camera.position.z+=50*flag; */
+	
+	//行星角速度
 	
 	// render using requestAnimationFrame
 	requestAnimationFrame(renderScene);
@@ -140,7 +218,7 @@ renderer.shadowMapEnabled = true;
 renderScene();
 // add the output of the renderer to the html element
 document.getElementById("WebGL-output").appendChild(renderer.domElement);
-	
+
 </script>
 </div>
 </body>
