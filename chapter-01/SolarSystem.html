@@ -34,8 +34,8 @@
 //一个空间
 // create a scene, that will hold all our elements such as objects, cameras and lights.
 var scene = new THREE.Scene();//the space
-
-// 辅助坐标系  参数250表示坐标系大小，可以根据场景大小去设置
+let ONE_DEG = Math.PI/180;
+// 辅助坐标系  参数250表示坐标系大小，可以根据场景大小去设置,红X，绿Y，蓝Z
 var axisHelper = new THREE.AxisHelper(500000);
 scene.add(axisHelper);
 
@@ -47,21 +47,19 @@ function initCamera(){
 	camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 63100);
 	// camera = new THREE.OrthographicCamera(30000,-30000,0,30000,50000);
 	// position and point the camera to the center of the scene
-	camera.position.x = 20;
-	camera.position.y = 20;
-	camera.position.z = 14960;//142940,450400;14960
-	camera.lookAt(new THREE.Vector3(0,0,14960));
+	camera.position.x = 40;
+	camera.position.y = 40;
+	camera.position.z =10* 14960;//142940,450400;14960,77830
+	camera.lookAt(new THREE.Vector3(0,0,10*14960));
 	return camera;
 }
 
 
-
-
 //星球对象构造函数，半径，相对角速度,相对参照位置(渲染时候做)
-function createPlanet(radius,angularSpeed,img,x,y,z,flag,ringImg){
+function createPlanet(radius,revoltionDay,rotationDay,img,x,y,z,flag,ringImg){
 
 	//尺寸缩放比例，角速度缩放比例，
-	let angularRate=0.02;
+	// let angularRate=0.02;
 	//万公里太大，导致半径会被忽略，所以半径和距离单位统一为千公里*10
 	//输入为直径，所以*0.5
 	let rangeRate=10*0.5;
@@ -69,9 +67,24 @@ function createPlanet(radius,angularSpeed,img,x,y,z,flag,ringImg){
 	//半径
 	var planet = new Object;
 	planet.radius = radius*rangeRate;
-	planet.angularSpeed = angularSpeed * angularRate;
+	// planet.angularSpeed = angularSpeed * angularRate;
 	planet.sphere=new THREE.SphereGeometry(planet.radius,40,40);
 	// mercury.sphere.position.x=1000;
+	
+	if(flag=="sun"){
+		// 公转周期天公转转角速度
+		planet.revolutionAngleSpeed = 0;
+		// 自转周期自转角速度,把天按秒等比缩小,美秒多少度
+		planet.rotationSpeed = 0;
+	}else{
+		// 公转周期天公转转角速度
+		planet.revolutionAngleSpeed = 360/revoltionDay;
+		// 自转周期自转角速度,把天按10分钟等比缩小,美秒多少度
+		planet.rotationSpeed = 360/rotationDay/24/6;
+	}
+	planet.flag = flag;
+	
+	
 	//材质
 	var texture = THREE.ImageUtils.loadTexture(img);//new THREE.TextureLoader().load(img);
 	var material = new THREE.MeshBasicMaterial( { map: texture } );
@@ -79,11 +92,11 @@ function createPlanet(radius,angularSpeed,img,x,y,z,flag,ringImg){
 	// var cube_metal = new THREE.Mesh(planet.sphere,material);
 	planet.sphere.position.x=x;
 	planet.sphere.position.y=y;
-	planet.sphere.position.z=z;
+	planet.sphere.position.z=z*10;//万公里
 	scene.add(planet.sphere);
 	// scene.add(planet.sphere);
 	
-	if(flag==true){
+	if(flag=="Saturn"){
 		//需要增加土星环
 		//立体原型环----放弃、不知道如何设置切面圆内径
 		// var geometry = new THREE.TorusGeometry( radius+(), , 16, 100 );
@@ -123,17 +136,18 @@ function createPlanet(radius,angularSpeed,img,x,y,z,flag,ringImg){
 		
 		
 		//D环，66.9~74.5
-		let ringD = createMesh(new THREE.RingGeometry(66.9,74.5,32,1),x,y,z,-30,"#d0d0d0");
-		let ringC = createMesh(new THREE.RingGeometry(74.658+1,92,32,1),x,y,z,-30,"#fcfecd");
-		let ringB = createMesh(new THREE.RingGeometry(92+3,117.58,40,1),x,y,z,-30,"#afafaf");
-		let ringA = createMesh(new THREE.RingGeometry(122.17,136.775,40,1),x,y,z,-30,"#dad763");
-		// let ringB1 =createMesh(new THREE.RingGeometry(92,117.58,32,1),x,y,z,-30,"#dad763"); 
+		planet.ringD = createMesh(new THREE.RingGeometry(66.9,74.5,32,1),x,y,z,-30,"#4C4540");
+		planet.ringC = createMesh(new THREE.RingGeometry(74.658+1,92,32,1),x,y,z,-30,"#918170");
+		planet.ringB = createMesh(new THREE.RingGeometry(92+3,117.58,40,1),x,y,z,-30,"#50473A");
+		planet.ringA = createMesh(new THREE.RingGeometry(122.17,136.775,40,1),x,y,z,-30,"#7B6E5D");
+		// let ringE =createMesh(new THREE.RingGeometry(92,117.58,32,1),x,y,z,-30,"#c0c0c0");//dad763 
 		
 		// add the sphere to the scene
-		scene.add(ringD);
-		scene.add(ringC);
-		scene.add(ringB);
-		scene.add(ringA);
+		scene.add(planet.ringD);
+		scene.add(planet.ringC);
+		scene.add(planet.ringB);
+		scene.add(planet.ringA);
+		// scene.add(ringE);
 		
 		
 		// scene.add( planet.torusA );
@@ -158,25 +172,24 @@ function createPlanet(radius,angularSpeed,img,x,y,z,flag,ringImg){
 			var mesh = THREE.SceneUtils.createMultiMaterialObject(geom, [meshMaterial, wireFrameMat]);
 			mesh.position.x=x;
 			mesh.position.y=y;
-			mesh.position.z=z;
+			mesh.position.z=z*10;
 			mesh.rotation.x=rotationX;
             return mesh;
         }
 
 //一个太阳,直径万公里、自转周期（天），行星表面，，，距离万公里
-let sun=createPlanet(140,0,'../assets/textures/planets/sun2.jpg',0,0,0);
-let mercury =createPlanet(0.48,0,'../assets/textures/planets/mercury.jpg',0,0,5791);
-let venus = createPlanet(1.21,0,'../assets/textures/planets/venus.jpg',0,0,10820);
-let earth = createPlanet(1.27,5,'../assets/textures/planets/earth2.jpg',0,0,14960);
-let mars = createPlanet(0.67,0,'../assets/textures/planets/Mars.png',0,0,22800);
-let jupiter = createPlanet(14.3,0,'../assets/textures/planets/Jupiter.jpg',0,0,77830);
-let saturn = createPlanet(12.05,0,'../assets/textures/planets/Saturn.jpg',0,0,142940,true
-,'../assets/textures/planets/SaturnRing4.png'/* SaturnRing.png */);
-let uranus = createPlanet(5.11,0,'../assets/textures/planets/Uranus.png',0,0,287100);
+let sun=createPlanet(140,0,0,'../assets/textures/planets/sun2.jpg',0,0,0);
+let mercury =createPlanet(0.48,87.7,58.65,'../assets/textures/planets/mercury.jpg',0,0,5791);
+let venus = createPlanet(1.21,224.7,243,'../assets/textures/planets/venus.jpg',0,0,10820);
+let earth = createPlanet(1.27,365,1,'../assets/textures/planets/earth2.jpg',0,0,14960);
+let mars = createPlanet(0.67,686.98,1,'../assets/textures/planets/Mars.png',0,0,22800);
+let jupiter = createPlanet(14.3,4332.71,0.41,'../assets/textures/planets/Jupiter.jpg',0,0,77830);
+let saturn = createPlanet(12.05,10759.5,0.426,'../assets/textures/planets/Saturn.jpg',0,0,142940,"Saturn",'../assets/textures/planets/SaturnRing4.png'/* SaturnRing.png */);
+let uranus = createPlanet(5.11,30685,0.426,'../assets/textures/planets/Uranus.png',0,0,287100);
 //let neptune =createPlanet(4.95,0,'../assets/textures/planets/Naptune_surface.png',0,0,450400,true,'../assets/textures/planets/Naptune_surface.png'/* SaturnRing.png */);
-let neptune = createPlanet(4.95,0,'../assets/textures/planets/Naptune_surface.png',0,0,450400);
+let neptune = createPlanet(4.95,164.8,0.75,'../assets/textures/planets/Naptune_surface.png',0,0,450400);
 
-
+let planets=[sun,mercury,venus,earth,mars,jupiter,saturn,uranus,neptune];
 
 
 let flag=1;
@@ -189,9 +202,18 @@ function renderScene(){
 		flag=1;
 	}
 	camera.position.z+=50*flag; */
+	// planets[3].sphere.rotateY(earth.rotationSpeed*ONE_DEG);
+	// earth.sphere.rotationY=earth.sphere.rotationY+earth.rotationSpeed*ONE_DEG;
+	// console.log(earth.sphere.rotationY);
 	
-	//行星角速度
+	//黄道面是y,z面，假设行星自转轴为Y轴
+	for(var j = 0,len = planets.length; j < len; j++){
+		//行星自转
+		planets[j].sphere.rotateY(planets[j].rotationSpeed*ONE_DEG);
+		//console.log(planets[j].rotationSpeed*ONE_DEG);
+		//行星角速度
 	
+	}
 	// render using requestAnimationFrame
 	requestAnimationFrame(renderScene);
 	renderer.render(scene, camera);
